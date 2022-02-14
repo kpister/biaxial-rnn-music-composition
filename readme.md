@@ -1,3 +1,29 @@
+# A combined package
+
+Midi work ported from [python-midi](https://github.com/vishnubob/python-midi)
+
+LSTM work from [theano-lstm](https://github.com/JonathanRaiman/theano_lstm)
+
+Learning from [original repo](https://github.com/danieldjohnson/biaxial-rnn-music-composition).
+
+
+# Previous config
+
+```
+[global]
+floatX=float32
+device=gpu
+base_compiledir=~/external/.theano/
+allow_gc=False
+warn_float64=warn
+[mode]=FAST_RUN
+
+[nvcc]
+fastmath=True
+[cuda]
+root=/usr/local/cuda
+```
+
 # Biaxial Recurrent Neural Network for Music Composition
 
 This code implements a recurrent neural network trained to generate classical music. The model, which uses LSTM layers and draws inspiration from convolutional neural networks, learns to predict which notes will be played at each time step of a musical piece.
