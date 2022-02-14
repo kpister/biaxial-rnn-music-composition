@@ -1,3 +1,5 @@
 aesara
 dill
 numpy
+bs4
+requests
