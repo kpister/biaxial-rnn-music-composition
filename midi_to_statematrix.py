@@ -8,7 +8,7 @@ UPPER_BOUND = 102
 
 
 def midiToNoteStateMatrix(midifile: Path):
-    pattern = midi.read_midifile(str(midifile))
+    pattern = midi.read_midifile(midifile)
 
     timeleft = [track[0].tick for track in pattern]
 

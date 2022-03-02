@@ -1,3 +1,4 @@
 output
 music
 .python-version
+__pycache__

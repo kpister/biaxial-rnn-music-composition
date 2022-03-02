@@ -580,13 +580,13 @@ class Track(list):
 
 
 class FileReader:
-    def read(self, midifile: BufferedReader):
+    def read(self, midifile: BufferedReader) -> Pattern:
         pattern = self.parse_file_header(midifile)
         for track in pattern:
             self.parse_track(midifile, track)
         return pattern
 
-    def parse_file_header(self, midifile: BufferedReader):
+    def parse_file_header(self, midifile: BufferedReader) -> Pattern:
         # First four bytes are MIDI header
         magic = midifile.read(4)
         if magic != b"MThd":
@@ -608,7 +608,7 @@ class FileReader:
             midifile.read(hdrsz - DEFAULT_MIDI_HEADER_SIZE)
         return Pattern(tracks=tracks, resolution=resolution, format=format)
 
-    def parse_track_header(self, midifile):
+    def parse_track_header(self, midifile: BufferedReader) -> int:
         # First four bytes are Track header
         magic = midifile.read(4)
         if magic != b"MTrk":
@@ -617,7 +617,7 @@ class FileReader:
         trksz = unpack(">L", midifile.read(4))[0]
         return trksz
 
-    def parse_track(self, midifile, track):
+    def parse_track(self, midifile: BufferedReader, track: Track) -> None:
         self.RunningStatus = None
         trksz = self.parse_track_header(midifile)
         trackdata = iter(midifile.read(trksz))
@@ -628,7 +628,7 @@ class FileReader:
             except StopIteration:
                 break
 
-    def parse_midi_event(self, trackdata):
+    def parse_midi_event(self, trackdata: bytes) -> Event:
         # first datum is varlen representing delta-time
         tick = read_varlen(trackdata)
         # next byte is status message
@@ -673,17 +673,17 @@ class FileReader:
 
 
 class FileWriter:
-    def write(self, midifile: BufferedWriter, pattern: Pattern):
+    def write(self, midifile: BufferedWriter, pattern: Pattern) -> None:
         self.write_file_header(midifile, pattern)
         for track in pattern:
             self.write_track(midifile, track)
 
-    def write_file_header(self, midifile: BufferedWriter, pattern: Pattern):
+    def write_file_header(self, midifile: BufferedWriter, pattern: Pattern) -> None:
         # First four bytes are MIDI header
         packdata = pack(">LHHH", 6, pattern.format, len(pattern), pattern.resolution)
         midifile.write(b"MThd" + packdata)
 
-    def write_track(self, midifile: BufferedWriter, track: Track):
+    def write_track(self, midifile: BufferedWriter, track: Track) -> None:
         buf = b""
         self.RunningStatus = None
         for event in track:
@@ -720,13 +720,13 @@ class FileWriter:
         return ret
 
 
-def read_midifile(path: Path):
+def read_midifile(path: Path) -> Pattern:
     reader = FileReader()
     with open(path, "rb") as midifile:
         return reader.read(midifile)
 
 
-def write_midifile(path: Path, pattern):
+def write_midifile(path: Path, pattern: Pattern) -> None:
     writer = FileWriter()
     with open(path, "wb") as midifile:
-        return writer.write(midifile, pattern)
+        writer.write(midifile, pattern)
